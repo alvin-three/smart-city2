@@ -6,9 +6,10 @@ export default class LightRadar {
   material: THREE.ShaderMaterial
   mesh: THREE.Mesh
   geometry: THREE.PlaneGeometry
-  constructor() {
+  eventListIndex: number
+  constructor(radius = 2, position = { x: 0, z: 0 }, color = 0xffff00) {
     // 雷达，平面
-    this.geometry = new THREE.PlaneGeometry(2, 2, 2)
+    this.geometry = new THREE.PlaneGeometry(radius, radius)
     this.material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -18,14 +19,14 @@ export default class LightRadar {
           value: 0
         },
         uColor: {
-          value: new THREE.Color('#ff00ff')
+          value: new THREE.Color(color)
         }
       }
     })
     this.mesh = new THREE.Mesh(this.geometry, this.material)
 
     // 设置位置
-    this.mesh.position.set(-8, 0.4, 8)
+    this.mesh.position.set(position.x, 0.4, position.z)
     this.mesh.rotation.x = -Math.PI / 2
 
     gsap.to(this.material.uniforms.uTime, {
@@ -35,5 +36,12 @@ export default class LightRadar {
       //   yoyo: true,
       ease: 'none'
     })
+    this.eventListIndex = 0
+  }
+  remove() {
+    this.mesh.remove()
+    this.mesh.removeFromParent()
+    this.mesh.material?.dispose()
+    this.mesh.geometry.dispose()
   }
 }

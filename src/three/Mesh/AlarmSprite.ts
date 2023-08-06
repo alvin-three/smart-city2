@@ -5,14 +5,25 @@ export default class AlarmSprite {
   mesh: THREE.Sprite
   fns: Array<CallableFunction>
   mouse: THREE.Vector2
-  constructor() {
+  eventListIndex: number
+  constructor(type = '火警', position = { x: -2, z: -1 }) {
     const textureLoader = new THREE.TextureLoader()
-    const map = textureLoader.load('./textures/alarm1.png')
-    this.material = new THREE.SpriteMaterial({ map: map })
+    const typeObj: {
+      [key: string]: string
+    } = {
+      火警: './textures/tag/fire.png',
+      治安: './textures/tag/jingcha.png',
+      电力: './textures/tag/e.png'
+    }
+    const map = textureLoader.load(typeObj[type])
+    this.material = new THREE.SpriteMaterial({
+      map: map,
+      blending: THREE.AdditiveBlending
+    })
     this.mesh = new THREE.Sprite(this.material)
 
     // 修改位置
-    this.mesh.position.set(-4.3, 3.5, -1.5)
+    this.mesh.position.set(position.x, 3.5, position.z)
 
     // 点击事件
     this.fns = []
@@ -30,8 +41,15 @@ export default class AlarmSprite {
         })
       }
     })
+    this.eventListIndex = 0
   }
   onClick(fn: CallableFunction) {
     this.fns.push(fn)
+  }
+  remove() {
+    this.mesh.remove()
+    this.mesh.removeFromParent()
+    this.mesh.material.dispose()
+    this.mesh.geometry.dispose()
   }
 }

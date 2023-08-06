@@ -28,21 +28,21 @@ const loadCity = () => {
     })
     scene.add(gltf.scene)
 
-    // 添加光墙
-    const wall = new LightWall()
-    scene.add(wall.mesh)
+    // // 添加光墙
+    // const wall = new LightWall()
+    // scene.add(wall.mesh)
 
     // 添加雷达
-    const radar = new LightRadar()
-    scene.add(radar.mesh)
+    // const radar = new LightRadar()
+    // scene.add(radar.mesh)
 
-    // 添加 警告
-    const alarm = new AlarmSprite()
+    // // 添加 警告
+    // const alarm = new AlarmSprite()
 
-    alarm.onClick(function (event: MouseEvent) {
-      console.log('警告', event)
-    })
-    scene.add(alarm.mesh)
+    // alarm.onClick(function (event: MouseEvent) {
+    //   console.log('警告', event)
+    // })
+    // scene.add(alarm.mesh)
   })
 }
 
