@@ -48,7 +48,7 @@ const City = (props: { eventList: IEventItem[] }) => {
   useEffect(() => {
     generateTargets()
     return () => {
-      console.log('有变化时，需要清楚事件')
+      // 移除事件
       eventBus.removeAllListeners('eventToggle')
       console.log(eventBus.listenerCount('eventToggle'), 'asdf')
     }

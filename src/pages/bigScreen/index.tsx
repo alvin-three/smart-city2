@@ -24,7 +24,6 @@ const BigScreen = (props: { dataInfo: ICityInfo; eventList: IEventItem[] }) => {
 
   const toggleEvent = (i: number) => {
     setActive(i)
-    console.log('11111111')
     eventBus.emit('eventToggle', i)
   }
   return (
