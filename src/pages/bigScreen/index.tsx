@@ -1,53 +1,49 @@
 import './index.scss'
 import loading from '../../assets/bg/bar.svg'
-import electric from '../../assets/bg/dianli.svg'
-import fire from '../../assets/bg/fire.svg'
-import jingcha from '../../assets/bg/jingcha.svg'
-import { ICityInfo, IEventItem } from '../../App'
 import eventBus from '../../utils/eventHub'
-import { useState } from 'react'
-const BigScreen = (props: { dataInfo: ICityInfo; eventList: IEventItem[] }) => {
-  const toFixInt = (num: number) => {
-    return num.toFixed(0)
+const BigScreen = () => {
+  const toggleAction = (i: number) => {
+    eventBus.emit('actionClick', i)
   }
-  const imgs: {
-    [key: string]: string
-  } = {
-    电力: electric,
-    火警: fire,
-    治安: jingcha
+  const toggleControl = (name: string) => {
+    eventBus.emit('toggleControls', name)
   }
-  const [currentActive, setActive] = useState<number>()
-  eventBus.on('spriteClick', (data) => {
-    setActive(data.i)
-  })
-
-  const toggleEvent = (i: number) => {
-    setActive(i)
-    eventBus.emit('eventToggle', i)
+  const toggleCamera = (name: string) => {
+    eventBus.emit('toggleCamera', name)
   }
   return (
     <div id="bigScreen">
       <div className="header">老陈智慧城市管理系统平台</div>
       <div className="main">
         <div className="left">
-          {Object.keys(props.dataInfo).map((key, index) => {
-            const item = props.dataInfo[key]
-            return (
-              <div className="cityEvent" key={index}>
-                <h3>
-                  <span>{item.name}</span>
-                </h3>
-                <h1>
-                  <img src={loading} className="icon" />
-                  <span>
-                    {toFixInt(item.number)}（{item.unit}）
-                  </span>
-                </h1>
-                <div className="footerBoder"></div>
-              </div>
-            )
-          })}
+          <div className="cityEvent">
+            <h3>
+              <span>热气球动画</span>
+            </h3>
+            <h1 onClick={() => toggleAction(0)}>
+              <img src={loading} className="icon" />
+              <span>横穿模式</span>
+            </h1>
+            <h1 onClick={() => toggleAction(1)}>
+              <img src={loading} className="icon" />
+              <span>环绕模式</span>
+            </h1>
+            <div className="footerBoder"></div>
+          </div>
+          <div className="cityEvent">
+            <h3>
+              <span>切换视角</span>
+            </h3>
+            <h1 onClick={() => toggleCamera('carcamera_Orientation')}>
+              <img src={loading} className="icon" />
+              <span>横向</span>
+            </h1>
+            <h1 onClick={() => toggleCamera('rightcamera_Orientation')}>
+              <img src={loading} className="icon" />
+              <span>尾部</span>
+            </h1>
+            <div className="footerBoder"></div>
+          </div>
         </div>
         <div className="right">
           <div className="cityEvent list">
@@ -55,24 +51,22 @@ const BigScreen = (props: { dataInfo: ICityInfo; eventList: IEventItem[] }) => {
               <span>事件列表</span>
             </h3>
             <ul>
-              {props.eventList.map((item, index) => {
-                return (
-                  <li
-                    key={index}
-                    className={currentActive == index ? 'active' : ''}
-                    onClick={() => toggleEvent(index)}
-                  >
-                    <h1>
-                      <div>
-                        <img className="icon" src={imgs[item.name]} />
-                        <span> {item.name} </span>
-                      </div>
-                      <span className="time"> {item.time} </span>
-                    </h1>
-                    <p>{item.type}</p>
-                  </li>
-                )
-              })}
+              <li onClick={() => toggleControl('orbit')}>
+                <h1>
+                  <div>
+                    <span>轨道控制器模式 </span>
+                  </div>
+                </h1>
+                <p></p>
+              </li>
+              <li onClick={() => toggleControl('fly')}>
+                <h1>
+                  <div>
+                    <span>飞行模式 </span>
+                  </div>
+                </h1>
+                <p></p>
+              </li>
             </ul>
           </div>
         </div>

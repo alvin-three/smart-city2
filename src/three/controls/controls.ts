@@ -1,13 +1,37 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import camera from '../camera/camera'
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls'
+import cameraModule from '../camera/camera'
 import renderer from '../renderer/renderer'
-
-// 可能存在多个控制器
-export const orbitControls = new OrbitControls(camera, renderer.domElement)
-
-// 设置控制器阻尼
-orbitControls.enableDamping = true
-// 设置自动旋转
-// controls.autoRotate = true;
-
-export default orbitControls
+import eventBus from '../../utils/eventHub'
+class ControlModules {
+  controls!: OrbitControls | FlyControls
+  constructor() {
+    this.setOrbitControls()
+    eventBus.on('toggleControls', (name: string) => {
+      if (name === 'orbit') {
+        this.setOrbitControls()
+      } else {
+        this.setFlyControls()
+      }
+    })
+  }
+  setOrbitControls() {
+    this.controls = new OrbitControls(
+      cameraModule.activeCamera,
+      renderer.domElement
+    )
+    // 设置阻尼
+    this.controls.enableDamping = true
+    this.controls.maxPolarAngle = Math.PI / 2
+    this.controls.minPolarAngle = 0
+  }
+  setFlyControls() {
+    this.controls = new FlyControls(
+      cameraModule.activeCamera,
+      renderer.domElement
+    )
+    this.controls.movementSpeed = 2
+    this.controls.rollSpeed = Math.PI / 60
+  }
+}
+export default new ControlModules()

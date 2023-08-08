@@ -63,6 +63,7 @@
   margin-bottom: 0.5rem;
   background-image: url(../../assets/bg/bg_img03.png);
   background-repeat: repeat;
+  pointer-events: auto;
 }
 
 .cityEvent::before {

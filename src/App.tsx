@@ -1,7 +1,7 @@
 import './App.css'
 import City from './pages/city/City'
 import BigScreen from './pages/bigScreen'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 export interface IInfoItem {
   name?: string
@@ -33,14 +33,6 @@ function App() {
     test: { number: 0 }
   })
   const [cityList, setCityList] = useState<IEventItem[]>([])
-  useEffect(() => {
-    changeInfo()
-    getCityList()
-    setInterval(() => {
-      changeInfo()
-      getCityList()
-    }, 10000)
-  }, [])
 
   const changeInfo = async () => {
     const res = await axios.get(
@@ -57,8 +49,8 @@ function App() {
 
   return (
     <div className="App">
-      {cityList.length ? <City eventList={cityList} /> : null}
-      <BigScreen dataInfo={dataInfo} eventList={cityList} />
+      <City />
+      <BigScreen />
     </div>
   )
 }
