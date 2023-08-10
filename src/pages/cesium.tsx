@@ -15,6 +15,7 @@ Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
   // 北
   61.2
 )
+const tiandituKey = 'c91205e0bef9e516b018693164bc6e51'
 // 设置token
 Cesium.Ion.defaultAccessToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDNjOTM2ZS0zNTJmLTQyOWEtYWE5ZC05NDM1NTBiZDkyYjIiLCJpZCI6MTI3NTg1LCJpYXQiOjE2NzgxNjc0Njd9.XhBVg2LHzny4EXwC46L28z6P9MbuCecfXyv-xlWs3vg'
@@ -22,7 +23,7 @@ const CesiumContainer = () => {
   useEffect(() => {
     init()
   })
-  const init = () => {
+  const init = async () => {
     const viewer = new Cesium.Viewer('cesium', {
       // 信息窗
       infoBox: false,
@@ -42,20 +43,61 @@ const CesiumContainer = () => {
       timeline: false,
       // 全局按钮
       fullscreenButton: false
-      // 设置天空盒
-      //   skyBox: new Cesium.SkyBox({})
     })
-    const provider = new Cesium.WebMapTileServiceImageryProvider({
-      //http://t0.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=您的密钥
-      url: 'http://t0.tianditu.gov.cn/img_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=ff37a568897e6029ac2bc62ac27398c9',
-      layer: 'tdtVecBasicLayer',
-      style: 'default',
-      format: 'image/jpeg',
-      tileMatrixSetID: 'GoogleMapsCompatible'
-    })
-    viewer.imageryLayers.addImageryProvider(provider)
     // 隐藏logo
     viewer.cesiumWidget.creditContainer.style.display = 'none'
+
+    // 相机
+    // const position = Cesium.Cartesian3.fromDegrees(116.395928, 39.9092, 100)
+    const position = Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 2000)
+    // 设置相机位置
+    // setView ，瞬间到达
+    // viewer.camera.setView({
+    //   // 指定相机位置
+    //   destination: position,
+    //   // 设置相机的视角
+    //   orientation: {
+    //     // 左手坐标系，y轴向上
+    //     // 偏航角度， 0 中间，90 向右，-90向左
+    //     heading: Cesium.Math.toRadians(0), // 头，沿着y轴转动,即水平左右转动的效果
+    //     // 俯仰角， 0 竖直向上， -90垂直向下
+    //     pitch: Cesium.Math.toRadians(-30), // 头上下 转动的角度，即沿着x轴转动
+    //     // 翻滚角度
+    //     roll: 0 // 沿着z轴转动
+    //   }
+    // })
+    // flyto 飞过去
+    viewer.camera.flyTo({
+      // 指定相机位置
+      destination: position,
+      // 设置相机的视角
+      orientation: {
+        // 左手坐标系，y轴向上
+        // 偏航角度， 0 中间，90 向右，-90向左
+        heading: Cesium.Math.toRadians(0), // 头，沿着y轴转动,即水平左右转动的效果
+        // 俯仰角， 0 竖直向上， -90垂直向下
+        pitch: Cesium.Math.toRadians(-30), // 头上下 转动的角度，即沿着x轴转动
+        // 翻滚角度
+        roll: 0 // 沿着z轴转动
+      }
+    })
+
+    // 添加3d建筑, 默认效果
+    const tileset = await Cesium.createOsmBuildingsAsync()
+    viewer.scene.primitives.add(tileset)
+    // 添加3d模型
+    viewer.entities.add({
+      position: Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 1500),
+      model: {
+        uri: './model/Air.glb',
+        // 设置模型的最小尺寸
+        minimumPixelSize: 128,
+        silhouetteSize: 5, // 模型轮廓
+        silhouetteColor: Cesium.Color.WHITE, // 轮廓颜色
+        // 设置模型可见范围
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 200000)
+      }
+    })
   }
   return <div id="cesium"></div>
 }
