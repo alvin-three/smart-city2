@@ -10,22 +10,17 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix --quiet ./"
   },
   "dependencies": {
-    "@types/d3": "^7.4.0",
-    "@types/dat.gui": "^0.7.10",
     "axios": "^1.4.0",
-    "d3": "^7.8.5",
-    "dat.gui": "^0.7.9",
+    "cesium": "^1.108.0",
     "eventemitter3": "^5.0.1",
     "gsap": "^3.11.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sass": "^1.64.2",
-    "three": "^0.150.1"
+    "sass": "^1.64.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
-    "@types/three": "^0.150.1",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@vitejs/plugin-react": "^3.1.0",

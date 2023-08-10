@@ -1,0 +1,18 @@
+{
+  "editor.fontSize": 18,
+  "terminal.integrated.fontSize": 18,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "material-icon-theme.activeIconPack": "react",
+  "workbench.iconTheme": "material-icon-theme",
+  "html.format.enable": false,
+  "html.format.preserveNewLines": false,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "typescript.format.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "files.refactoring.autoSave": false,
+  "files.autoSaveDelay": 5000,
+  "files.autoSave": "onFocusChange"
+}
