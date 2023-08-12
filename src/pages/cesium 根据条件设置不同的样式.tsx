@@ -36,15 +36,6 @@ const CesiumContainer = () => {
         requestWaterMask: true // 水纹效果
       })
     })
-
-    // 设置沙箱允许使用js, 解决控制台报错问题
-    const iframe = document.getElementsByClassName('cesium-infoBox-iframe')[0]
-    iframe.setAttribute(
-      'sandbox',
-      'allow-same-origin allow-scripts allow-popups allow-forms'
-    )
-    iframe.setAttribute('src', '')
-
     // 隐藏logo
     viewer.cesiumWidget.creditContainer.style.display = 'none'
     // 添加全球建筑物
@@ -60,20 +51,19 @@ const CesiumContainer = () => {
 
     // 设置3dtiles的样式
     tileset.style = new Cesium.Cesium3DTileStyle({
-      defines: {
-        // 与广州塔的距离
-        distance:
-          "distance(vec2(${feature['cesium#longitude']},${feature['cesium#latitude']}),vec2(113.3191,23.109))"
-      },
       color: {
         conditions: [
-          ['${distance} < 0.01', "color('rgba(0,0,50, 0.7)')"],
-          ['${distance} < 0.02', "color('rgba(0,0,50, 0.5)')"],
-          ['${distance} < 0.04', "color('rgba(0,0,50, 0.2)')"],
+          [
+            "${feature['building']} === 'apartments'",
+            'color("rgba(255,255,0, 0.5)")'
+          ],
+          [
+            '${feature["cesium#estimatedHeight"]} > 300',
+            'color("rgba(0, 100, 100, 0.5)")'
+          ],
           ['true', 'color("white")']
         ]
-      },
-      show: "${distance} < 0.04 && ${feature['building']} === 'apartments'"
+      }
     })
     // 监视3dtileset的性能
     // viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin)
