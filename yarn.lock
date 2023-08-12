@@ -859,7 +859,14 @@ caniuse-lite@^1.0.30001449:
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001460.tgz"
   integrity sha512-Bud7abqjvEjipUkpLs4D7gR0l8hBYBHoa+tGtKJHvT2AYzLp1z7EmVkUT4ERpVUfca8S2HGIVs883D8pUH1ZzQ==
 
-cesium@^1.108.0:
+cesium-navigation-es6@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.npmmirror.com/cesium-navigation-es6/-/cesium-navigation-es6-3.0.8.tgz#aa5c627efdbae134c3ac9ff0f407d10f396465df"
+  integrity sha512-RyoY9T02fE9pRNgXCmOD8QlSV5XJ2LPf+O9IpYEkTcyiUztOIwVQwdeT0heHvk+R1eM8jAG6YnRPvfyDsRonEA==
+  dependencies:
+    cesium "^1.88"
+
+cesium@^1.108.0, cesium@^1.88:
   version "1.108.0"
   resolved "https://registry.npmmirror.com/cesium/-/cesium-1.108.0.tgz#a6b9301640c5c1c261cc116d4fad5a33a959ea1b"
   integrity sha512-8hhRC7O13g6jVws14A16CGcKKdPAZ4xiRUqyrMZ40qCbAoPbsufQY7dFJQ2EE9vR/FGehbon+q8/OBwweQlRaQ==
