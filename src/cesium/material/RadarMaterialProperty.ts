@@ -22,13 +22,13 @@ export default class RadarMaterialProperty {
             // 生成默认的基础材质
             czm_material material = czm_getDefaultMaterial(materialInput);
             // 旋转 uv 得到动图
+            // 固定的旋转写法，后面 - 0.5 ，是为了围绕中心旋转
             vec2 newSt = mat2(
               sin(uTime), -cos(uTime),
               cos(uTime), sin(uTime)
             ) * (materialInput.st - 0.5);
+            // 旋转完之后，坐标值要改回原来 0 - 1 的范围
             newSt = newSt + 0.5;
-
-
             vec2 st = newSt;
             // 绘制圆形
             float alpha = 1.0 - step(0.5,  distance(st, vec2(0.5, 0.5)));

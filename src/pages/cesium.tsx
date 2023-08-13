@@ -11,6 +11,8 @@ import LigthCone from '../cesium/LightCone'
 import RectLightLines from '../cesium/RectLightLines'
 import RoadLightLine from '../cesium/RoadLightLine'
 import RadarLight from '../cesium/RadarLight'
+import LightSpread from '../cesium/LightSpread'
+import LightWall from '../cesium/LightWall'
 const CesiumContainer = () => {
   const [viewer, setViewer] = useState<Cesium.Viewer>()
   useEffect(() => {
@@ -41,6 +43,10 @@ const CesiumContainer = () => {
       new RoadLightLine(viewer)
       // 添加雷达
       new RadarLight(viewer)
+      // 6变形光波扩散
+      new LightSpread(viewer)
+      // 光墙
+      new LightWall(viewer)
     }
   }, [viewer])
   return <div id="cesium"></div>
