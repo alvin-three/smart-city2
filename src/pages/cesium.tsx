@@ -6,6 +6,8 @@ import initView from '../cesium/initView'
 import { MousePosition } from '../cesium/MousePosition'
 import CesiumNavigation from 'cesium-navigation-es6'
 import modityMap from '../cesium/modifyMap'
+import modifyBuilding from '../cesium/modifyBuildings'
+import LigthCone from '../cesium/LightCone'
 const CesiumContainer = () => {
   const [viewer, setViewer] = useState<Cesium.Viewer>()
   useEffect(() => {
@@ -26,6 +28,10 @@ const CesiumContainer = () => {
       })
       // 修改地图图层
       modityMap(viewer)
+      // 修改建筑颜色
+      modifyBuilding(viewer)
+      // 添加光锥
+      new LigthCone(viewer)
     }
   }, [viewer])
   return <div id="cesium"></div>

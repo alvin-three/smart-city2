@@ -10,8 +10,9 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix --quiet ./"
   },
   "dependencies": {
+    "@turf/turf": "^6.5.0",
     "axios": "^1.4.0",
-    "cesium": "^1.108.0",
+    "cesium": "1.93.0",
     "cesium-navigation-es6": "^3.0.8",
     "eventemitter3": "^5.0.1",
     "gsap": "^3.11.4",

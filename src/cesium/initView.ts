@@ -35,26 +35,15 @@ export default async function initView() {
     timeline: false,
     // 全局按钮
     fullscreenButton: false,
-    shouldAnimate: true, // 默认开始动画
-    terrainProvider: await Cesium.createWorldTerrainAsync({
-      requestVertexNormals: true, // 阴影效果
-      requestWaterMask: true // 水纹效果
-    })
+    shouldAnimate: true // 默认开始动画
   })
   // 隐藏logo
   viewer.cesiumWidget.creditContainer.style.display = 'none'
-  initBuildings(viewer)
-  // 广州塔
-  const position = Cesium.Cartesian3.fromDegrees(113.3191, 23.109, 1000)
+  // 武汉保利大厦
+  const position = Cesium.Cartesian3.fromDegrees(114.40497, 30.49405, 1000)
   viewer.camera.flyTo({
     destination: position,
     duration: 1
   })
   return viewer
-}
-
-// 添加全球建筑物
-const initBuildings = async (viewer: Cesium.Viewer) => {
-  const tileset = await Cesium.createOsmBuildingsAsync()
-  viewer.scene.primitives.add(tileset)
 }
