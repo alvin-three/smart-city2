@@ -8,6 +8,9 @@ import CesiumNavigation from 'cesium-navigation-es6'
 import modityMap from '../cesium/modifyMap'
 import modifyBuilding from '../cesium/modifyBuildings'
 import LigthCone from '../cesium/LightCone'
+import RectLightLines from '../cesium/RectLightLines'
+import RoadLightLine from '../cesium/RoadLightLine'
+import RadarLight from '../cesium/RadarLight'
 const CesiumContainer = () => {
   const [viewer, setViewer] = useState<Cesium.Viewer>()
   useEffect(() => {
@@ -32,6 +35,12 @@ const CesiumContainer = () => {
       modifyBuilding(viewer)
       // 添加光锥
       new LigthCone(viewer)
+      // 添加流光飞线
+      new RectLightLines(viewer)
+      // 添加路线
+      new RoadLightLine(viewer)
+      // 添加雷达
+      new RadarLight(viewer)
     }
   }, [viewer])
   return <div id="cesium"></div>
