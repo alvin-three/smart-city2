@@ -1,9 +1,9 @@
 import './App.css'
-import CesiumContainer from './pages/cesium'
+import Home from './pages/home'
 function App() {
   return (
     <div className="App">
-      <CesiumContainer />
+      <Home />
     </div>
   )
 }
