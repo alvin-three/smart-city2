@@ -286,6 +286,20 @@ export default function Home() {
       keyStates[e.code] = false
       keyStates.isDown = false
     })
+
+    // 多层级渲染物体，提升性能
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      wireframe: true
+    })
+    const lod = new THREE.LOD()
+    for (let i = 0; i < 5; i++) {
+      const geometry = new THREE.SphereGeometry(1, 22 - i * 5, 25 - i * 5)
+      const mesh = new THREE.Mesh(geometry, material)
+      lod.addLevel(mesh, i * 5)
+    }
+    lod.position.set(10, 0, 10)
+    scene.add(lod)
     animate()
   }
 
