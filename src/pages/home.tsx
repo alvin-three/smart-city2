@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { GUI } from 'dat.gui'
 import Stats from 'three/examples/jsm/libs/stats.module'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { useEffect, useRef } from 'react'
 // 八叉树
 import { Octree } from 'three/examples/jsm/math/Octree'
@@ -43,6 +44,16 @@ export default function Home() {
       1000
     )
     camera.position.set(0, 5, 10)
+
+    const backCamera = new THREE.PerspectiveCamera(
+      70,
+      window.innerWidth / window.innerHeight,
+      0.001,
+      1000
+    )
+    backCamera.position.set(0, 5, -10)
+
+    let activeCamera = camera
     // renderer
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -66,7 +77,13 @@ export default function Home() {
       resetPlayer()
       stats.update()
       // controls.update()
-      renderer.render(scene, camera)
+      // 回切换相机
+      renderer.render(scene, activeCamera)
+      // 更新动画
+      if (mixer) {
+        // activeAction
+        mixer.update(deltTime)
+      }
       requestAnimationFrame(animate)
     }
     document.body.appendChild(stats.dom)
@@ -102,8 +119,8 @@ export default function Home() {
     const worldOctree = new Octree()
     worldOctree.fromGraphNode(group)
     // 创建八叉树辅助工具
-    const octreeHelper = new OctreeHelper(worldOctree)
-    scene.add(octreeHelper)
+    // const octreeHelper = new OctreeHelper(worldOctree)
+    // scene.add(octreeHelper)
     // 创建碰撞物体
     // 上下两个端点，然后上下两个半圆（头和角），凑成一个胶囊，
     // 模拟 1.7m的人
@@ -113,6 +130,43 @@ export default function Home() {
       0.35 // 半圆的半径
     )
 
+    // 添加光源
+    const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 2)
+    scene.add(light)
+    // 加载模型
+    const loader = new GLTFLoader()
+    const actions: {
+      [key: string]: THREE.AnimationAction
+    } = {}
+    let activeAction: THREE.AnimationAction
+    let mixer: THREE.AnimationMixer
+    loader.load('./models/RobotExpressive.glb', (gltf) => {
+      const robot = gltf.scene
+      robot.scale.set(0.5, 0.5, 0.5)
+      robot.position.set(0, -0.8, 0)
+      capsule.add(robot)
+      // 加载动画
+      // 动画混合器
+      mixer = new THREE.AnimationMixer(robot)
+      for (let i = 0; i < gltf.animations.length; i++) {
+        const animation = gltf.animations[i]
+        const name = animation.name
+        // 裁剪出动画
+        actions[name] = mixer.clipAction(animation)
+        if (['Idle', 'Walking', 'Running'].includes(name)) {
+          // 休闲，走路和跑步，动画需要重复
+          actions[name].clampWhenFinished = false
+          actions[name].loop = THREE.LoopRepeat
+        } else {
+          // 其他动作，只做一次
+          actions[name].clampWhenFinished = true
+          actions[name].loop = THREE.LoopOnce
+        }
+      }
+      // 设置默认动画
+      activeAction = actions['Idle']
+      activeAction.play()
+    })
     // 胶囊身体
     const capsuleBodyGeometry = new THREE.PlaneGeometry(0.5, 1, 1, 1)
     const capsuleBody = new THREE.Mesh(
@@ -123,21 +177,33 @@ export default function Home() {
       })
     )
     // 创建一个胶囊物体,只是为了展示用
-    const capsuleGeometry = new THREE.CapsuleGeometry(0.35, 1, 32)
-    const capsuleMaterial = new THREE.MeshBasicMaterial({
-      color: 0xff0000,
-      side: THREE.DoubleSide
-    })
-    const capsule = new THREE.Mesh(capsuleGeometry, capsuleMaterial)
+    // const capsuleGeometry = new THREE.CapsuleGeometry(0.35, 1, 32)
+    // const capsuleMaterial = new THREE.MeshBasicMaterial({
+    //   color: 0xff0000,
+    //   side: THREE.DoubleSide
+    // })
+    // const capsule = new THREE.Mesh(capsuleGeometry, capsuleMaterial)
+    // 用rotob替换胶囊
+    const capsule = new THREE.Object3D()
+
     capsule.position.set(0, 0.85, 0)
 
-    // 将相机绑定到胶囊上，实现相机跟随胶囊
-    capsule.add(camera)
+    // 上下旋转，添加空对象, 在物体和相机之间添加一个空的子对象，
+    // 当上下旋转的时候，只旋转这个空对象，带动相机上下旋转
+    const capsuleUpDownControls = new THREE.Object3D()
+    // 将相机绑定到胶囊的子对象上，实现相机跟随胶囊
+    capsuleUpDownControls.add(camera)
+    capsuleUpDownControls.add(backCamera)
+    capsule.add(capsuleUpDownControls)
+    // 相机看着胶囊，相机位置设置
     camera.position.set(0, 2, -5)
+    backCamera.position.set(0, 2, 5)
     camera.lookAt(capsule.position)
+    backCamera.lookAt(capsule.position)
     // 控制器也是
     // controls.target = capsule.position
     capsuleBody.position.set(0, 0.5, 0)
+
     capsule.add(capsuleBody)
     scene.add(capsule)
 
@@ -168,7 +234,7 @@ export default function Home() {
       }
 
       // 计算玩家移动的距离
-      const playerDistance = playerVelocity.clone().multiplyScalar(deltTime)
+      const playerDistance = playerVelocity.clone().multiplyScalar(deltTime * 5)
       // 移动玩家
       playerCollider.translate(playerDistance)
       //更新胶囊的位置
@@ -176,6 +242,20 @@ export default function Home() {
 
       // 进行碰撞检测
       playerCollisions()
+
+      // 为啥写在这里
+      if (
+        Math.abs(playerVelocity.x) + Math.abs(playerVelocity.z) > 0.1 &&
+        Math.abs(playerVelocity.x) + Math.abs(playerVelocity.z) <= 2
+      ) {
+        fadeToAction('Walking')
+        console.log('Walking')
+      } else if (Math.abs(playerVelocity.x) + Math.abs(playerVelocity.z) > 2) {
+        fadeToAction('Running')
+        console.log('Running')
+      } else {
+        fadeToAction('Idle')
+      }
     }
     // 碰撞检测
     const playerCollisions = () => {
@@ -264,12 +344,47 @@ export default function Home() {
     window.addEventListener(
       'mousemove',
       (e) => {
-        // 旋转胶囊
+        // 左右旋转,控制胶囊
         capsule.rotation.y -= e.movementX * 0.003
+        // 上下旋转
+        capsuleUpDownControls.rotation.x += e.movementY * 0.003
+        if (capsuleUpDownControls.rotation.x > Math.PI / 8) {
+          capsuleUpDownControls.rotation.x = Math.PI / 8
+        } else if (capsuleUpDownControls.rotation.x < -Math.PI / 8) {
+          capsuleUpDownControls.rotation.x = -Math.PI / 8
+        }
         // camera.rotation.x -= moveYDelt * 0.0001
       },
       false
     )
+
+    // 更新动作
+    const fadeToAction = (actionName: string) => {
+      const prevAction = activeAction
+      activeAction = actions[actionName]
+      if (prevAction !== activeAction) {
+        // 如果是一样的动作，就不处理了
+        prevAction.fadeOut(0.3) // 在0.3s内消失
+        activeAction
+          .reset()
+          .setEffectiveTimeScale(1)
+          .setEffectiveWeight(1)
+          .fadeIn(0.3)
+          .play()
+        // 动作完成之后，需要恢复到休闲状态
+        mixer.addEventListener('finished', (e) => {
+          const prevAction = activeAction
+          activeAction = actions['Idle']
+          prevAction.fadeOut(0.3) // 在0.3s内消失
+          activeAction
+            .reset()
+            .setEffectiveTimeScale(1)
+            .setEffectiveWeight(1)
+            .fadeIn(0.3)
+            .play()
+        })
+      }
+    }
 
     // 鼠标锁定事件
     document.addEventListener('mousedown', (e) => {
@@ -285,6 +400,14 @@ export default function Home() {
     document.addEventListener('keyup', (e) => {
       keyStates[e.code] = false
       keyStates.isDown = false
+      if (e.code === 'KeyV') {
+        // 切换相机
+        activeCamera = activeCamera === backCamera ? camera : backCamera
+      }
+
+      if (e.code === 'KeyT') {
+        fadeToAction('Wave')
+      }
     })
 
     // 多层级渲染物体，提升性能
