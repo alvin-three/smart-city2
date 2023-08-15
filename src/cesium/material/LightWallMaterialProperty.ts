@@ -38,7 +38,7 @@ export default class LightWallMaterialProperty {
 
     gsap.to(this.params, {
       uTime: 1,
-      duration: 1,
+      duration: 2,
       repeat: -1,
       ease: 'linear'
     })

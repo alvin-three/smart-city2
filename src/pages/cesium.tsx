@@ -13,6 +13,7 @@ import RoadLightLine from '../cesium/RoadLightLine'
 import RadarLight from '../cesium/RadarLight'
 import LightSpread from '../cesium/LightSpread'
 import LightWall from '../cesium/LightWall'
+import ParticlaLight from '../cesium/ParticalLight'
 const CesiumContainer = () => {
   const [viewer, setViewer] = useState<Cesium.Viewer>()
   useEffect(() => {
@@ -47,6 +48,10 @@ const CesiumContainer = () => {
       new LightSpread(viewer)
       // 光墙
       new LightWall(viewer)
+      // 粒子效果
+      new ParticlaLight(viewer)
+      new ParticlaLight(viewer, Cesium.Color.AQUA)
+      new ParticlaLight(viewer, Cesium.Color.PURPLE)
     }
   }, [viewer])
   return <div id="cesium"></div>
